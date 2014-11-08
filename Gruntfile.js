@@ -27,6 +27,11 @@ module.exports = function(grunt) {
                     except: ['jQuery', 'Backbone', 'angular']
                 }
             },
+            typescripts: {
+                files: {
+                    './dist/www/app.min.js': ['./dist/www/app.js']
+                }
+            },
             production: {
                 files: {
                     './dist/www/static/js/index.min.js': ['./dist/www/static/js/index.js']
@@ -62,5 +67,7 @@ module.exports = function(grunt) {
     grunt.loadTasks('userTasks');
 
     grunt.registerTask('default', ['less', 'typescript', 'uglify', 'concat']);
+
+    grunt.registerTask('ts', ['typescript']);
 
 };

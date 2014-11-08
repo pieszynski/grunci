@@ -1,39 +1,72 @@
 
-/// <reference path="./../tsd/node.d.ts"/>
+/// <reference path="./helpers.ts"/>
 /// <reference path="./controllers.ts"/>
 
-(() => {
+class Main {
 
-    var express = require('express'),
-        compression = require('compression'),
-        router = express.Router(),
-        controllers : Controllers.Global = new Controllers.Global();
+    private _fileSystem : Helpers.IFileSystem;
+    private _express : Helpers.IExpress;
+    private _router : Helpers.IExpressRouter;
 
-    var config = {
-        port : 80
-    };
+    constructor() {
 
-    var app = module.exports = express();
-
-    app.disable('x-powered-by');
-
-    app.use(compression());
-
-    app.use(express.static(__dirname + '/static'));
-
-    function routeAction(req, res, next) {
-
-        controllers.execute(req, res, next);
+        this._fileSystem = Helpers.Node.GetFileSystem();
+        this._express = Helpers.Node.GetExpress();
+        this._router = Helpers.Node.GetExpressRouter();
 
     }
 
-    router.get(/.*/i, routeAction);
+    private noAction(text : string, req, res, next) {
 
-    app.all('/', router);
-    app.all(/.*/i, router);
+        res.status(404).end(text);
 
-    app.listen(config.port, function () {
-        console.log('Server running at http://*:' + config.port);
-    });
+    }
 
-})();
+    public startWithConfig(configData : Helpers.IConfig) : void {
+
+        this._express.disable('x-powered-by');
+
+        this._express.use(Helpers.Node.UseExpressCompression());
+        this._express.use(Helpers.Node.UseExpressStatic('/static'));
+
+        // TODO: register controller actions here
+
+        this._router.all(/.*/i, (req, res, next) => {
+
+            this.noAction(configData.goAway, req, res, next);
+
+        });
+
+        this._express.all(/.*/i, this._router);
+
+        this._express.listen(configData.port, () => {
+
+            Helpers.Log.info('Listening on port', configData.port, configData);
+
+        });
+
+    }
+
+    public start(configPath : string) : Main {
+
+        this._fileSystem.readFile(configPath, (err, data) => {
+
+            if (err)
+                return Helpers.Log.error(err);
+
+            var configData : Helpers.IConfig = data.toJSON();
+
+            this.startWithConfig(configData);
+
+        });
+
+        return this;
+
+    }
+
+}
+
+module.exports = (new Main()).startWithConfig({
+    port: 80,
+    goAway : 'go away!'
+});
