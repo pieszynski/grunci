@@ -6,7 +6,13 @@ module Helpers {
     export interface IFileSystem {
 
         readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void ): void;
+        readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void ): void;
 
+    }
+
+    export interface IPath {
+
+        resolve(...pathSegments: any[]): string;
     }
 
     export interface IRouteMethod {
@@ -44,12 +50,19 @@ module Helpers {
 
         private static _express : any = require('express');
         private static _fs : IFileSystem = require('fs');
+        private static _path : IPath = require('path');
         private static _compression : any = require('compression');
 
         public static GetFileSystem() : IFileSystem {
 
             return Node._fs;
 
+        }
+
+        public static GetFullPath(relativePath : string) : string {
+
+            var p = Node._path.resolve(relativePath);
+            return p;
         }
 
         public static GetExpress() : IExpress {

@@ -68,7 +68,8 @@ module.exports = function(grunt) {
         copy : {
             production : {
                 files : [
-                    {expand: false, src: ['www/static/index.html'], dest: 'dist/www/static/index.html'}
+                    {expand: false, src: ['www/static/index.html'], dest: 'dist/www/static/index.html'},
+                    {expand: false, src: ['grunci.json'], dest: 'dist/grunci.json'}
                 ]
             }
         }

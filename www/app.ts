@@ -22,7 +22,7 @@ class Main {
 
     }
 
-    public startWithConfig(configData : Helpers.IConfig) : void {
+    public startWithConfig(configData : Helpers.IConfig) : Main {
 
         this._express.disable('x-powered-by');
 
@@ -41,20 +41,22 @@ class Main {
 
         this._express.listen(configData.port, () => {
 
-            Helpers.Log.info('Listening on port', configData.port, configData);
+            Helpers.Log.info('Listening on http://*:' + configData.port + '/');
 
         });
+
+        return this;
 
     }
 
     public start(configPath : string) : Main {
 
-        this._fileSystem.readFile(configPath, (err, data) => {
+        this._fileSystem.readFile(configPath, 'utf8', (err, data) => {
 
             if (err)
                 return Helpers.Log.error(err);
 
-            var configData : Helpers.IConfig = data.toJSON();
+            var configData : Helpers.IConfig = JSON.parse(data);
 
             this.startWithConfig(configData);
 
@@ -66,7 +68,21 @@ class Main {
 
 }
 
-module.exports = (new Main()).startWithConfig({
-    port: 80,
-    goAway : 'go away!'
-});
+// Start server from config in code (no filesystem read)
+//
+// module.exports = (new Main()).startWithConfig({
+//     port: 80,
+//     goAway : 'go away!'
+// });
+
+
+// start server using config parameter
+//
+// > node www/app.min.js grunci.json
+
+if (3 > process.argv.length)
+    throw new Error('No config path in parameters.');
+
+var configPath : string = Helpers.Node.GetFullPath(process.argv[2]);
+
+module.exports = (new Main()).start(configPath);

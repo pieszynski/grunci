@@ -14,5 +14,5 @@ and all what you need will appear in dist/ directory.
 #### Starting
 From dist/ directory run following command
 ```bash
-> node www/app.min.js grunci.config.json
+> node www/app.min.js grunci.json
 ```
