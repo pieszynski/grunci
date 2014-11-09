@@ -1,12 +1,12 @@
 GrunCI
 ======
 
-Grunt based Continuous Integration
-Pre alfa version!
+Grunt based Continuous Integration (pre alfa version!).
 
 #### Build from source
-Simply run
+To compile source you will need to install required packages and compile source code
 ```bash
+> npm install
 > grunt
 ```
 and all what you need will appear in dist/ directory.
