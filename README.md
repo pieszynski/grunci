@@ -12,7 +12,8 @@ To compile source you will need to install required packages and compile source 
 and all what you need will appear in dist/ directory.
 
 #### Starting
-From dist/ directory run following command
+From dist/ directory start web server (see example below).
 ```bash
+> cd dist/
 > node www/app.min.js grunci.json
 ```
