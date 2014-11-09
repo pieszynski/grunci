@@ -4,7 +4,7 @@ GrunCI
 Grunt based Continuous Integration
 Pre alfa version!
 
-#### Buid from source
+#### Build from source
 Simply run
 ```bash
 > grunt
