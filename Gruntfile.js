@@ -3,6 +3,12 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        clean: {
+            production : {
+                force : true,
+                src : ["dist/**"]
+            }
+        },
         less : {
             production : {
                 options : {
@@ -58,15 +64,24 @@ module.exports = function(grunt) {
                 ],
                 dest : './dist/www/static/js/index.min.js'
             }*/
+        },
+        copy : {
+            production : {
+                files : [
+                    {expand: false, src: ['www/static/index.html'], dest: 'dist/www/static/index.html'}
+                ]
+            }
         }
     });
 
+    grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadTasks('userTasks');
 
-    grunt.registerTask('default', ['less', 'typescript', 'uglify', 'concat']);
+    grunt.registerTask('default', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy']);
 
     grunt.registerTask('ts', ['typescript']);
 

@@ -2,8 +2,9 @@ GrunCI
 ======
 
 Grunt based Continuous Integration
+Pre alfa version!
 
-#### Buid process
+#### Buid from source
 Simply run
 ```bash
 > grunt
