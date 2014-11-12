@@ -9,23 +9,44 @@ module.exports = function(grunt) {
     grunt.registerMultiTask('typescript', function () {
 
         var done = this.async(),
-            normalFiles = this.data.normal,
-            wait = prepareWait(normalFiles.length, done);
+            allFiles = this.data.files,
+            wait = prepareWait(allFiles.length, done);
 
-        for(var idx = 0; idx < normalFiles.length; idx++) {
+        for(var idx = 0; idx < allFiles.length; idx++) {
 
-            runTsc(normalFiles[idx].src, normalFiles[idx].dest, wait);
+            var fileInfo = allFiles[idx];
+            runTsc(fileInfo.src, fileInfo.dest, fileInfo.module === true, fileInfo.dir, wait);
 
         }
     });
 
     grunt.log.writeln('typescript registered');
 
-    function runTsc(tsSourceFile, tsDestinationFile, callback) {
+    function runTsc(tsSourceFile, tsDestinationFile, isModule, outDir, callback) {
 
         var tsSourceFilePath = '',
             tsDestinationFilePath = path.normalize(path.resolve() + '/' + tsDestinationFile),
-            args = ['tsc', '--target', 'ES5', '--out', '"' + tsDestinationFilePath + '"'];
+            args = ['tsc', '--target', 'ES5'];
+
+        if (outDir) {
+
+            var outDirFullPath = path.normalize(path.resolve() + '/' + outDir);
+            args.push('--outDir');
+            args.push(outDirFullPath);
+
+        }
+
+        if (isModule) {
+
+            args.push('--module');
+            args.push('commonjs');
+
+        } else {
+
+            args.push('--out');
+            args.push('"' + tsDestinationFilePath + '"');
+
+        }
 
         if (tsSourceFile instanceof Array) {
 
@@ -40,6 +61,7 @@ module.exports = function(grunt) {
 
             tsSourceFilePath = path.normalize(path.resolve() + '/' + tsSourceFile);
             args.push('"' + tsSourceFilePath + '"');
+
         }
 
         var cmd = args.join(' ');
@@ -57,7 +79,7 @@ module.exports = function(grunt) {
 
             } else {
 
-                grunt.log.writeln('File', tsSourceFile.cyan, 'compiled successfully.');
+                grunt.log.writeln('File', (tsSourceFile || '').toString().cyan, 'compiled successfully.');
 
             }
 

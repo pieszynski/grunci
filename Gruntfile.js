@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         },
         typescript: {
             production : {
-                normal : [
+                files : [
                     { dest: './dist/www/app.js', src: './www/app.ts' },
                     { dest: './dist/www/static/js/index.js', src: './www/static/js/index.ts' }
                 ]
@@ -72,6 +72,12 @@ module.exports = function(grunt) {
                     {expand: false, src: ['grunci.json'], dest: 'dist/grunci.json'}
                 ]
             }
+        },
+        watch : {
+            dev : {
+                files : ['www/**/*.ts'],
+                tasks : ['typescript', 'uglify', 'concat:productionJs', 'copy']
+            }
         }
     });
 
@@ -80,10 +86,13 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-contrib-copy');
+    grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadTasks('userTasks');
 
     grunt.registerTask('default', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy']);
 
     grunt.registerTask('ts', ['typescript']);
+
+    grunt.registerTask('dev', ['default', 'watch']);
 
 };
