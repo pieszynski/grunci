@@ -1,5 +1,6 @@
 
 /// <reference path="./helpers.ts"/>
+/// <reference path="./project.ts"/>
 /// <reference path="./controllers.ts"/>
 
 class Main {
@@ -7,6 +8,7 @@ class Main {
     private _fileSystem : Helpers.IFileSystem;
     private _express : Helpers.IExpress;
     private _router : Helpers.IExpressRouter;
+    private _global : Controllers.Global;
 
     constructor() {
 
@@ -22,14 +24,29 @@ class Main {
 
     }
 
+    public updateConfig(configData : Helpers.IConfig) : Helpers.IConfig {
+
+        configData.projects = Helpers.Node.GetFullPath(configData.projects);
+
+        return configData;
+
+    }
+
     public startWithConfig(configData : Helpers.IConfig) : Main {
+
+        this.updateConfig(configData);
+
+        // print config
+        Helpers.Log.info(configData);
+
+        this._global = new Controllers.Global(configData);
 
         this._express.disable('x-powered-by');
 
         this._express.use(Helpers.Node.UseExpressCompression());
         this._express.use(Helpers.Node.UseExpressStatic('/static'));
 
-        // TODO: register controller actions here
+        this._global.RegisterRoutes(this._router);
 
         this._router.all(/.*/i, (req, res, next) => {
 

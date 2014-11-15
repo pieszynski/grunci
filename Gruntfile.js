@@ -71,6 +71,11 @@ module.exports = function(grunt) {
                     {expand: false, src: ['www/static/index.html'], dest: 'dist/www/static/index.html'},
                     {expand: false, src: ['grunci.json'], dest: 'dist/grunci.json'}
                 ]
+            },
+            example : {
+                files : [
+                    {expand: true, cwd: 'example/', src: '**/*', dest: 'dist/'},
+                ]
             }
         },
         watch : {
@@ -88,6 +93,9 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadTasks('userTasks');
+
+    grunt.registerTask('cls', ['clean']);
+    grunt.registerTask('a', ['clean', 'copy:example']);
 
     grunt.registerTask('default', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy']);
 

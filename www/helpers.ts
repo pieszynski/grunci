@@ -23,6 +23,7 @@ module Helpers {
 
         use(fn : any);
         get(route : any, fn : IRouteMethod);
+        post(route : any, fn : IRouteMethod);
         all(fn : IRouteMethod);
         all(fn : IExpressRouter);
         all(route : any, fn : IRouteMethod);
@@ -43,6 +44,7 @@ module Helpers {
 
         port : number;
         goAway : string;
+        projects : string;
 
     }
 

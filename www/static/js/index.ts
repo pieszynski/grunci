@@ -11,7 +11,7 @@ interface IIndexController {
 
     var app : ng.IModule = angular.module('indexModule', []);
 
-    app.controller('indexCtrl', ['$scope', function ($scope) {
+    app.controller('indexCtrl', ['$scope', '$http', function ($scope, $http) {
 
         var self : IIndexController = this;
 
@@ -20,6 +20,8 @@ interface IIndexController {
             return 'abc';
 
         }
+
+        $http.post('/project/list', function(data) {});
 
     }]);
 
