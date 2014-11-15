@@ -4,7 +4,7 @@
 
     <head>
 
-        <title>GrunCI</title>
+        <title>{{ index.title() }}</title>
 
         <link rel="stylesheet" type="text/css" href="/css/style.min.css">
 
@@ -14,7 +14,14 @@
     </head>
 
     <body>
-    {{ index.abc() }}
+    <h1>{{ index.title() }}</h1>
+    <p>
+        Projects
+    </p>
+    <ul>
+        <li ng-repeat="pName in index.getProjectsList()">{{pName}}</li>
+    </ul>
+
     </body>
 
 </html>

@@ -2,7 +2,9 @@
 /// <reference path="../../../tsd/angular.d.ts"/>
 
 interface IIndexController {
-    abc() : string;
+    _projectsList : string[];
+    title() : string;
+    getProjectsList() : string[];
 }
 
 (() => {
@@ -15,13 +17,27 @@ interface IIndexController {
 
         var self : IIndexController = this;
 
-        self.abc = function () {
+        self._projectsList = [];
 
-            return 'abc';
+        self.title = function () {
+
+            return 'GrunCI';
 
         }
 
-        $http.post('/project/list', function(data) {});
+        self.getProjectsList = function () {
+
+            return self._projectsList;
+
+        }
+
+        $http
+            .post('/project/list')
+            .success(function(data) {
+
+                self._projectsList = data;
+
+            });
 
     }]);
 
