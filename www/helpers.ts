@@ -5,6 +5,7 @@ module Helpers {
 
     export interface IFileSystem {
 
+        readdir(path: string, callback?: (err: NodeJS.ErrnoException, files: string[]) => void): void;
         readFile(filename: string, callback: (err: NodeJS.ErrnoException, data: Buffer) => void ): void;
         readFile(filename: string, encoding: string, callback: (err: NodeJS.ErrnoException, data: string) => void ): void;
 

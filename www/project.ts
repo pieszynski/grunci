@@ -9,8 +9,18 @@ module Helpers {
         public static GetProjectsList(projectsDir : string, callback : (err : NodeJS.ErrnoException, projectsList : string[]) => void) : void {
 
             var fs : IFileSystem = Node.GetFileSystem();
+            fs.readdir(projectsDir, function (err, files) {
 
-            callback(null, []);
+                if (err) {
+
+                    callback(err, null);
+                    return;
+
+                }
+
+                callback(null, files);
+
+            });
 
         }
     }

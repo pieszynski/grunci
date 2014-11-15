@@ -95,12 +95,13 @@ module.exports = function(grunt) {
     grunt.loadTasks('userTasks');
 
     grunt.registerTask('cls', ['clean']);
-    grunt.registerTask('a', ['clean', 'copy:example']);
 
-    grunt.registerTask('default', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy']);
+    grunt.registerTask('default', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy:production']);
+
+    grunt.registerTask('dev', ['clean', 'less', 'typescript', 'uglify', 'concat', 'copy']);
 
     grunt.registerTask('ts', ['typescript']);
 
-    grunt.registerTask('dev', ['default', 'watch']);
+    grunt.registerTask('devwatch', ['default', 'watch']);
 
 };
