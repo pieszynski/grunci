@@ -28,5 +28,3 @@ or event faster if you only change server side TypeScript code
 > grunt ts && node dist/www/app.js dist/grunci.json
 ```
 ## TODO
-
-* Listing projects check for Gruntfile
