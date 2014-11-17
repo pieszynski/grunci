@@ -51,8 +51,12 @@ module Controllers {
 
         public ProjectBuild(req : any, res : any, fallback : any) : void {
 
+            // ToDo: get name from parameters
+            var name = req.originalUrl.substring(req.originalUrl.lastIndexOf('/'));
+            var normalizedPath = Helpers.Node.NormalizePath(this._config.projects + '/' + name);
+
             Helpers.Process.RunNpmAndGrunt(
-                'c:\\Users\\PP14777\\Desktop\\grunci\\dist\\projects\\build1\\',
+                normalizedPath,
                 function(data) {
 
                     res.write(data);
