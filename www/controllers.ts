@@ -20,6 +20,9 @@ module Controllers {
             // projects list
             router.post('/project/list', (req, res, next) => this.ProjectListAction(req, res, next));
 
+            // build project
+            router.all('/project/build/:name', (req, res, next) => this.ProjectBuild(req, res, next));
+
         }
 
         public Execute(req : any, res : any, fallback : any) : void {
@@ -43,6 +46,29 @@ module Controllers {
                 res.status(200).send(projectsList);
 
             });
+
+        }
+
+        public ProjectBuild(req : any, res : any, fallback : any) : void {
+
+            // ToDo: get name from parameters
+            var name = req.originalUrl.substring(req.originalUrl.lastIndexOf('/'));
+            var normalizedPath = Helpers.Node.NormalizePath(this._config.projects + '/' + name);
+
+            Helpers.Process.RunNpmAndGrunt(
+                normalizedPath,
+                function(data) {
+
+                    res.write(data);
+
+                },
+                function(code) {
+
+                    res.end();
+
+                });
+
+            res.status(200);
 
         }
 
