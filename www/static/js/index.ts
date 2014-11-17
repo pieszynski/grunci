@@ -3,8 +3,10 @@
 
 interface IIndexController {
     _projectsList : string[];
+    buildOutput : string;
     title() : string;
     getProjectsList() : string[];
+    getBuildOutput() : string;
 }
 
 var StreamAjax;
@@ -92,6 +94,16 @@ var StreamAjax;
 
 })(StreamAjax || (StreamAjax = {}));
 
+function slideBottom() {
+
+    $('.scrollToBottom').each(function (idx, domElem) {
+
+        domElem.scrollTop = domElem.scrollHeight;
+
+    });
+
+}
+
 (() => {
 
     'use strict';
@@ -103,6 +115,7 @@ var StreamAjax;
         var self : IIndexController = this;
 
         self._projectsList = [];
+        self.buildOutput = ''
 
         self.title = function () {
 
@@ -116,6 +129,12 @@ var StreamAjax;
 
         }
 
+        self.getBuildOutput = function () {
+
+            return self.buildOutput;
+
+        }
+
         $http
             .post('/project/list')
             .success(function(data) {
@@ -124,18 +143,18 @@ var StreamAjax;
 
             });
 
+        var onProgressAndSuccess = function() {
+
+            self.buildOutput = this.responseText;
+            $scope.$applyAsync(slideBottom);
+            //console.log('progress:', data, this.responseText);
+
+        }
+
         StreamAjax
             .post('/project/build/build1')
-            .success(function(data) {
-
-                console.log('success:', data);
-
-            })
-            .progress(function(data) {
-
-                console.log('progress:', data);
-
-            })
+            .success(onProgressAndSuccess)
+            .progress(onProgressAndSuccess)
             .execute();
 
     }]);

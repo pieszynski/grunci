@@ -21,6 +21,10 @@
     <ul>
         <li ng-repeat="pName in index.getProjectsList()">{{pName}}</li>
     </ul>
+    <div>Output window:</div>
+    <div class="scrollToBottom">
+        <pre><code ng-bind="index.getBuildOutput()"></code></pre>
+    </div>
 
     </body>
 

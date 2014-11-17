@@ -35,6 +35,12 @@ module Helpers {
 
     }
 
+    export interface IRouteParam {
+
+        (req : any, res : any, next : any, routeParameter : any) : void;
+
+    }
+
     export interface IExpressBase {
 
         use(fn : any);
@@ -44,6 +50,7 @@ module Helpers {
         all(fn : IExpressRouter);
         all(route : any, fn : IRouteMethod);
         all(route : any, router : IExpressRouter);
+        param(name : string, fn : IRouteParam);
 
     }
 
@@ -195,41 +202,80 @@ module Helpers {
 
     export class Process {
 
-        public static RunNpmAndGrunt(projectPath : string, liveCallback : (data : string) => void, finishCallback : (code : number) => void) {
+        public static RunNpmAndGrunt(projectPath : string,
+                                     liveCallback : (data : string) => void,
+                                     finishCallback : (code : number) => void) {
 
             var liveCallbackWrapper = function(data) { liveCallback('' + data); }
+            var finishCallbackWrapper = function(code) {
 
-            liveCallback('Starting npm...\r\n');
+                liveCallbackWrapper((new Date()).toUTCString());
+                finishCallback(code);
 
-            Node.SpawnProcess('npm', ['install'], {
-                cwd : projectPath,
-                outCallback : liveCallbackWrapper,
-                exitCallback : function (code) {
+            }
 
-                    liveCallback('\r\nFinish npm, exit code:' + code + '\r\n');
+            var fs : IFileSystem = Node.GetFileSystem(),
+                npmPackagePath = Node.NormalizePath(projectPath + '/package.json'),
+                gruntFilePath = Node.NormalizePath(projectPath + '/Gruntfile.js');
 
-                    if (0 !== code) {
+            liveCallbackWrapper((new Date()).toUTCString());
+            liveCallbackWrapper('\r\nBuilding project: ' + projectPath + '\r\n');
 
-                        finishCallback(code);
-                        return;
+            fs.exists(npmPackagePath, function (npmExists : boolean) {
 
-                    }
+                if (!npmExists) {
 
-                    liveCallback('\r\n\r\nStarting grunt...\r\n');
-
-                    Node.SpawnProcess('grunt', [], {
-                        cwd : projectPath,
-                        outCallback : liveCallbackWrapper,
-                        exitCallback : function(gcode) {
-
-                            liveCallback('\r\nFinish grunt, exit code:' + gcode + '\r\n');
-
-                            finishCallback(gcode);
-
-                        }
-                    });
+                    liveCallbackWrapper('No npm package.json file found. ' + npmPackagePath);
+                    finishCallbackWrapper(-1);
+                    return;
 
                 }
+
+                liveCallbackWrapper('Starting npm...\r\n');
+
+                Node.SpawnProcess('npm', ['install'], {
+                    cwd : projectPath,
+                    outCallback : liveCallbackWrapper,
+                    exitCallback : function (code) {
+
+                        liveCallbackWrapper('\r\nFinish npm, exit code:' + code + '\r\n');
+
+                        if (0 !== code) {
+
+                            finishCallbackWrapper(code);
+                            return;
+
+                        }
+
+                        fs.exists(gruntFilePath, function (gruntExists : boolean) {
+
+                            if (!gruntExists) {
+
+                                liveCallbackWrapper('No GRUNT file found. ' + gruntFilePath);
+                                finishCallbackWrapper(-1);
+                                return;
+
+                            }
+
+                            liveCallbackWrapper('\r\n\r\nStarting grunt...\r\n');
+
+                            Node.SpawnProcess('grunt', [], {
+                                cwd : projectPath,
+                                outCallback : liveCallbackWrapper,
+                                exitCallback : function(gcode) {
+
+                                    liveCallbackWrapper('\r\nFinish grunt, exit code:' + gcode + '\r\n');
+
+                                    finishCallbackWrapper(gcode);
+
+                                }
+                            });
+
+                        });
+
+                    }
+                });
+
             });
 
         }

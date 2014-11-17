@@ -17,17 +17,33 @@ module Controllers {
 
         public RegisterRoutes(router : Helpers.IExpressRouter) : void {
 
+            // PARAMETERS
+
+            // project name
+            router.param('projectName', (req, res, next, projectName)
+                => Global.ProjectNameParameter(req, res, next, projectName));
+
+            // ROUTES
+
             // projects list
             router.post('/project/list', (req, res, next) => this.ProjectListAction(req, res, next));
 
             // build project
-            router.all('/project/build/:name', (req, res, next) => this.ProjectBuild(req, res, next));
+            router.all('/project/build/:projectName', (req, res, next) => this.ProjectBuild(req, res, next));
 
         }
 
         public Execute(req : any, res : any, fallback : any) : void {
 
             fallback();
+
+        }
+
+        public static ProjectNameParameter(req : any, res : any, next : any, projectName : string) : void {
+
+            req.projectName = projectName;
+
+            next();
 
         }
 
@@ -51,8 +67,15 @@ module Controllers {
 
         public ProjectBuild(req : any, res : any, fallback : any) : void {
 
-            // ToDo: get name from parameters
-            var name = req.originalUrl.substring(req.originalUrl.lastIndexOf('/'));
+            var name = req.projectName;
+
+            if (!name) {
+
+                fallback();
+                return;
+
+            }
+
             var normalizedPath = Helpers.Node.NormalizePath(this._config.projects + '/' + name);
 
             Helpers.Process.RunNpmAndGrunt(
