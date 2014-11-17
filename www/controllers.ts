@@ -51,11 +51,20 @@ module Controllers {
 
         public ProjectBuild(req : any, res : any, fallback : any) : void {
 
-            Helpers.Process.RunNpmAndGrunt('c:\\Users\\PP14777\\Desktop\\grunci\\dist\\projects\\build1\\',
-                function(data) { console.log(data); },
-                function(code) { console.log(code); });
+            Helpers.Process.RunNpmAndGrunt(
+                'c:\\Users\\PP14777\\Desktop\\grunci\\dist\\projects\\build1\\',
+                function(data) {
 
-            res.status(200).send('ok');
+                    res.write(data);
+
+                },
+                function(code) {
+
+                    res.end();
+
+                });
+
+            res.status(200);
 
         }
 

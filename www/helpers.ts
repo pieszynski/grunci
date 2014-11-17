@@ -199,14 +199,14 @@ module Helpers {
 
             var liveCallbackWrapper = function(data) { liveCallback('' + data); }
 
-            liveCallback('Starting npm...');
+            liveCallback('Starting npm...\r\n');
 
             Node.SpawnProcess('npm', ['install'], {
                 cwd : projectPath,
                 outCallback : liveCallbackWrapper,
                 exitCallback : function (code) {
 
-                    liveCallback('Finish npm, exit code:' + code);
+                    liveCallback('\r\nFinish npm, exit code:' + code + '\r\n');
 
                     if (0 !== code) {
 
@@ -215,14 +215,14 @@ module Helpers {
 
                     }
 
-                    liveCallback('\r\n\r\nStarting grunt...');
+                    liveCallback('\r\n\r\nStarting grunt...\r\n');
 
                     Node.SpawnProcess('grunt', [], {
                         cwd : projectPath,
                         outCallback : liveCallbackWrapper,
                         exitCallback : function(gcode) {
 
-                            liveCallback('Finish grunt, exit code:' + gcode);
+                            liveCallback('\r\nFinish grunt, exit code:' + gcode + '\r\n');
 
                             finishCallback(gcode);
 
