@@ -85,6 +85,13 @@ class Main {
 
 }
 
+// catch here any unhandled exceptions
+process.on('uncaughtException', function(err) {
+
+    Helpers.Log.error(err, arguments);
+
+});
+
 // Start server from config in code (no filesystem read)
 //
 // module.exports = (new Main()).startWithConfig({

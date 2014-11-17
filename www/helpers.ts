@@ -7,6 +7,12 @@ module Helpers {
         (callback : () => void) : void;
     }
 
+    export interface ISpawnProcessOptions {
+        cwd : string;
+        outCallback(data : string);
+        exitCallback(code : number);
+    }
+
     export interface IFileSystem {
 
         exists(path: string, callback?: (exists: boolean) => void): void;
@@ -64,10 +70,49 @@ module Helpers {
         private static _fs : IFileSystem = require('fs');
         private static _path : IPath = require('path');
         private static _compression : any = require('compression');
+        private static _child_process : any = require('child_process');
+
+        public static IsWindows() : boolean {
+
+            var response = 0 === process.env.os.toLowerCase().indexOf('win');
+            return response;
+
+        }
 
         public static GetFileSystem() : IFileSystem {
 
             return Node._fs;
+
+        }
+
+        public static SpawnProcess(command : string, args : string[], options : ISpawnProcessOptions) {
+
+            if (Node.IsWindows()) {
+
+                args.unshift('/C', command);
+                command = 'cmd.exe';
+
+            }
+
+            var startedProcess = this._child_process.spawn(command, args, options);
+            startedProcess.stdout.on('data', function (pidData) {
+
+                if (options.outCallback)
+                    options.outCallback(pidData);
+
+            });
+            startedProcess.stderr.on('data', function (pidData) {
+
+                if (options.outCallback)
+                    options.outCallback(pidData);
+
+            });
+            startedProcess.on('close', function (closeCode) {
+
+                if (options.exitCallback)
+                    options.exitCallback(closeCode);
+
+            });
 
         }
 
@@ -146,6 +191,49 @@ module Helpers {
                 this._actions[i](() => this.tryFinnish());
 
         }
+    }
+
+    export class Process {
+
+        public static RunNpmAndGrunt(projectPath : string, liveCallback : (data : string) => void, finishCallback : (code : number) => void) {
+
+            var liveCallbackWrapper = function(data) { liveCallback('' + data); }
+
+            liveCallback('Starting npm...');
+
+            Node.SpawnProcess('npm', ['install'], {
+                cwd : projectPath,
+                outCallback : liveCallbackWrapper,
+                exitCallback : function (code) {
+
+                    liveCallback('Finish npm, exit code:' + code);
+
+                    if (0 !== code) {
+
+                        finishCallback(code);
+                        return;
+
+                    }
+
+                    liveCallback('\r\n\r\nStarting grunt...');
+
+                    Node.SpawnProcess('grunt', [], {
+                        cwd : projectPath,
+                        outCallback : liveCallbackWrapper,
+                        exitCallback : function(gcode) {
+
+                            liveCallback('Finish grunt, exit code:' + gcode);
+
+                            finishCallback(gcode);
+
+                        }
+                    });
+
+                }
+            });
+
+        }
+
     }
 
     export class Log {

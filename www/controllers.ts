@@ -20,6 +20,9 @@ module Controllers {
             // projects list
             router.post('/project/list', (req, res, next) => this.ProjectListAction(req, res, next));
 
+            // build project
+            router.all('/project/build/:name', (req, res, next) => this.ProjectBuild(req, res, next));
+
         }
 
         public Execute(req : any, res : any, fallback : any) : void {
@@ -43,6 +46,16 @@ module Controllers {
                 res.status(200).send(projectsList);
 
             });
+
+        }
+
+        public ProjectBuild(req : any, res : any, fallback : any) : void {
+
+            Helpers.Process.RunNpmAndGrunt('c:\\Users\\PP14777\\Desktop\\grunci\\dist\\projects\\build1\\',
+                function(data) { console.log(data); },
+                function(code) { console.log(code); });
+
+            res.status(200).send('ok');
 
         }
 
