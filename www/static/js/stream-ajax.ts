@@ -50,7 +50,7 @@ module Ajax {
 
         }
 
-        public execute() : StreamAjax {
+        public execute(data? : any) : StreamAjax {
 
             var _this = this;
             var xhr = new XMLHttpRequest();
@@ -72,6 +72,7 @@ module Ajax {
 
             };
 
+            // ToDo: Convert "data" to send() parameter
             xhr.send();
 
             return this;
@@ -81,7 +82,7 @@ module Ajax {
 
             var response : StreamAjax = new StreamAjax(url);
 
-            return response.execute();
+            return response.execute(data);
 
         }
 
