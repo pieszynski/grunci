@@ -5,6 +5,7 @@ Grunt based Continuous Integration (not even pre alfa version!).
 
 #### Current status
 * in DEV build on website refresh - auto build project named 'build1' outputing progress to website
+* resolve long building vs. 4096B browser receive cache
 
 #### Build from source
 To compile source you will need to install required packages and compile source code
