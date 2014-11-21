@@ -26,7 +26,7 @@ module Controllers {
             // ROUTES
 
             // projects list
-            router.post('/project/list', (req, res, next) => this.ProjectListAction(req, res, next));
+            router.all('/project/list', (req, res, next) => this.ProjectListAction(req, res, next));
 
             // build project
             router.all('/project/build/:projectName', (req, res, next) => this.ProjectBuild(req, res, next));
@@ -83,6 +83,9 @@ module Controllers {
                 function(data) {
 
                     res.write(data);
+                    // ToDo: optimize FOR in a form similar to below (cached spaces buffer)
+                    for(var a=0;a<4096;a++) res.write(' ');
+                    //res.write(new Buffer(4096));
 
                 },
                 function(code) {

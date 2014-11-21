@@ -4,9 +4,10 @@
 
 interface IIndexController {
     _projectsList : string[];
-    buildOutput : string;
+    buildOutput : any;
     title() : string;
     getProjectsList() : string[];
+    buildProject(projectName : string) : void;
     getBuildOutput() : string;
 }
 
@@ -45,6 +46,15 @@ function slideBottom() {
 
         }
 
+        self.buildProject = function (projectName) {
+
+            Ajax.StreamAjax
+                .post('/project/build/' + projectName)
+                .success(onProgressAndSuccess)
+                .progress(onProgressAndSuccess);
+
+        }
+
         self.getBuildOutput = function () {
 
             return self.buildOutput;
@@ -62,15 +72,16 @@ function slideBottom() {
         var onProgressAndSuccess = function() {
 
             self.buildOutput = this.responseText;
+            self.buildOutput = self.buildOutput.replace(/( ){10,}/gi, ' ', 'gi');
             $scope.$applyAsync(slideBottom);
             //console.log('progress:', data, this.responseText);
 
         }
 
-        Ajax.StreamAjax
-            .post('/project/build/build1')
-            .success(onProgressAndSuccess)
-            .progress(onProgressAndSuccess);
+            Ajax.StreamAjax
+                .post('/project/build/build1')
+                .success(onProgressAndSuccess)
+                .progress(onProgressAndSuccess);
 
     }]);
 

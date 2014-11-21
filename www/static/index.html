@@ -19,7 +19,7 @@
         Projects
     </p>
     <ul>
-        <li ng-repeat="pName in index.getProjectsList()">{{pName}}</li>
+        <li ng-repeat="pName in index.getProjectsList()"><a class="link" ng-click="index.buildProject(pName)">{{pName}}</a></li>
     </ul>
     <div>Output window:</div>
     <div class="scrollToBottom">
